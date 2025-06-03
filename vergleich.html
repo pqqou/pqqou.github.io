@@ -52,9 +52,6 @@
     .profile-stats div {
       text-align: center;
     }
-    .profile-overlay-area {
-      position: relative;
-    }
     .private-overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -67,7 +64,8 @@
       font-size: 1.1em;
       color: #2c3e50;
       z-index: 2;
-      pointer-events: none;
+      /* NEU: Radius kleiner, damit Overlay nicht über Profilbild etc. */
+      border-radius: 0 0 12px 12px;
     }
     .privacy-options {
       display: flex;
@@ -107,7 +105,8 @@
     }
     .bio-strike {
       text-decoration: line-through;
-      color: #888;
+      color: #888; /* Grauer Text */
+      opacity: 0.5; /* Noch etwas mehr ausgegraut */
     }
   </style>
 </head>
@@ -125,7 +124,8 @@
     <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profilbild" class="profile-pic">
     <div class="profile-name" id="profileName">Max Mustermann</div>
     <div class="profile-username" id="profileUsername">@maxmuster</div>
-    <div class="profile-overlay-area">
+    <!-- NEU: Wrapper für Bio und Stats -->
+    <div class="profile-content-wrapper" style="position:relative;">
       <div class="profile-bio" id="profileBio">
         Willkommen auf meinem Profil! Ich liebe Webentwicklung, Reisen und guten Kaffee.
       </div>
@@ -143,6 +143,7 @@
           <div>Posts</div>
         </div>
       </div>
+      <!-- Overlay NUR über Bio und Stats -->
       <div id="privateOverlay" class="private-overlay" style="display:none;">
         <div style="font-size:2em; margin-bottom:10px;">🔒</div>
         Dieses Profil ist privat.<br>
@@ -158,34 +159,67 @@
       <th id="thPrivat">Privates Profil</th>
     </tr>
     <tr>
-      <td>Sichtbarkeit</td>
-      <td id="sichtbarkeitOeffentlich">Für alle im Internet sichtbar, auch ohne Anmeldung.</td>
-      <td id="sichtbarkeitPrivat">Nur für bestätigte Follower sichtbar.</td>
-    </tr>
-    <tr>
       <td>Beschreibung</td>
-      <td id="bioOeffentlich">Profilbeschreibung ist sichtbar.</td>
-      <td id="bioPrivat">Profilbeschreibung ist ausgeblendet.</td>
+      <td id="bioOeffentlich">
+        Beschreibung ist für alle sichtbar.<br>
+        <span style="color:green;">+ Offenheit, mehr Reichweite</span><br>
+        <span style="color:red;">- Weniger Privatsphäre</span>
+      </td>
+      <td id="bioPrivat">
+        Beschreibung ist verborgen.<br>
+        <span style="color:green;">+ Mehr Privatsphäre</span><br>
+        <span style="color:red;">- Weniger Selbstdarstellung</span>
+      </td>
     </tr>
     <tr>
       <td>Follower</td>
-      <td id="followerOeffentlich">Follower-Zahl ist sichtbar.</td>
-      <td id="followerPrivat">Follower-Zahl ist ausgeblendet.</td>
+      <td id="followerOeffentlich">
+        Follower-Anzahl ist sichtbar.<br>
+        <span style="color:green;">+ Transparenz, soziale Bestätigung</span><br>
+        <span style="color:red;">- Vergleichsdruck möglich</span>
+      </td>
+      <td id="followerPrivat">
+        Follower-Anzahl ist verborgen.<br>
+        <span style="color:green;">+ Schutz vor Vergleichen</span><br>
+        <span style="color:red;">- Weniger soziale Beweise</span>
+      </td>
     </tr>
     <tr>
       <td>Abonniert</td>
-      <td id="followingOeffentlich">Abonniert-Zahl ist sichtbar.</td>
-      <td id="followingPrivat">Abonniert-Zahl ist ausgeblendet.</td>
+      <td id="followingOeffentlich">
+        Abonniert-Anzahl ist sichtbar.<br>
+        <span style="color:green;">+ Offen, wem man folgt</span><br>
+        <span style="color:red;">- Weniger Privatsphäre</span>
+      </td>
+      <td id="followingPrivat">
+        Abonniert-Anzahl ist verborgen.<br>
+        <span style="color:green;">+ Mehr Privatsphäre</span><br>
+        <span style="color:red;">- Weniger Transparenz</span>
+      </td>
     </tr>
     <tr>
       <td>Beiträge</td>
-      <td id="postsOeffentlich">Beiträge sind sichtbar.</td>
-      <td id="postsPrivat">Beiträge sind ausgeblendet.</td>
+      <td id="postsOeffentlich">
+        Beiträge sind sichtbar.<br>
+        <span style="color:green;">+ Inhalte für alle zugänglich</span><br>
+        <span style="color:red;">- Weniger Schutz der Inhalte</span>
+      </td>
+      <td id="postsPrivat">
+        Beiträge sind verborgen.<br>
+        <span style="color:green;">+ Schutz der Inhalte</span><br>
+        <span style="color:red;">- Weniger Reichweite</span>
+      </td>
     </tr>
     <tr>
       <td>Datenschutz</td>
-      <td id="datenschutzOeffentlich">Gering – persönliche Infos sind leicht zugänglich.</td>
-      <td id="datenschutzPrivat">Höher – Daten sind nur eingeschränkt zugänglich.</td>
+      <td id="datenschutzOeffentlich">
+        Weniger Kontrolle über eigene Daten.<br>
+        <span style="color:red;">- Geringerer Schutz</span>
+      </td>
+      <td id="datenschutzPrivat">
+        Mehr Kontrolle über eigene Daten.<br>
+        <span style="color:green;">+ Höherer Schutz</span>
+      </td>
     </tr>
   </table>
 
@@ -224,15 +258,15 @@
       // Beschreibung
       if (bioPrivate.checked) {
         profileBio.classList.add('private-info');
-        profileBio.classList.add('bio-strike');
+        profileBio.classList.add('bio-strike'); // NEU: Durchstreichen
         bioOeffentlich.classList.add('private-info');
         bioPrivat.classList.remove('private-info');
       } else {
         profileBio.classList.remove('private-info');
-        profileBio.classList.remove('bio-strike');
+        profileBio.classList.remove('bio-strike'); // NEU: Durchstreichen entfernen
         bioOeffentlich.classList.remove('private-info');
         bioPrivat.classList.add('private-info');
-      }
+}
       // Follower
       if (followersPrivate.checked) {
         followersDiv.classList.add('private-info');
