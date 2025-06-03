@@ -46,9 +46,6 @@
     .question {
       margin-bottom: 20px;
     }
-    .answer {
-      margin-top: 20px;
-    }
     .result {
       margin-top: 20px;
       font-weight: bold;
@@ -89,6 +86,65 @@
       margin-top: 25px;
       display: none;
     }
+    .email-view {
+      margin: 25px auto 10px auto;
+      max-width: 520px;
+      background: #fff;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(44,62,80,0.07);
+      text-align: left;
+      font-size: 16px;
+      padding: 0;
+      overflow: hidden;
+      display: none;
+    }
+    .email-header {
+      background: #f4f6fa;
+      padding: 12px 18px;
+      border-bottom: 1px solid #e1e4e8;
+    }
+    .email-from {
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .email-to {
+      color: #555;
+      font-size: 14px;
+    }
+    .email-subject {
+      font-weight: bold;
+      margin-top: 8px;
+      color: #2980b9;
+    }
+    .email-body {
+      padding: 18px;
+      color: #222;
+      background: #fff;
+      min-height: 60px;
+    }
+    .email-cta-link {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 8px 18px;
+      background: #2980b9;
+      color: #fff !important;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 15px;
+    }
+    .email-cta-link:hover {
+      background: #1c5980;
+    }
+    .phishing-choice {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .phishing-choice button {
+      min-width: 120px;
+    }
     a {
       display: inline-block;
       margin-top: 30px;
@@ -109,9 +165,10 @@
         <span class="progress-label" id="progressLabel"></span>
       </div>
       <div class="question" id="question"></div>
-      <div class="answer">
-        <button onclick="answer(true)" id="btnPhishing">Phishing</button>
-        <button onclick="answer(false)" id="btnKeinPhishing">Kein Phishing</button>
+      <div class="email-view" id="emailView"></div>
+      <div class="phishing-choice" id="phishingChoice" style="display:none;">
+        <button onclick="answer(true)">Phishing</button>
+        <button onclick="answer(false)">Kein Phishing</button>
       </div>
       <div class="result" id="result"></div>
       <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Weiter</button>
@@ -130,52 +187,136 @@
   <script>
     const questions = [
       {
-        text: "Sie erhalten eine E-Mail von 'service@spakrasse.de', die behauptet, Ihr Konto sei gesperrt. Ein Link fordert Sie auf, sich sofort einzuloggen.",
+        // Phishing mit Rechtschreibfehlern
+        email: {
+          from: "Sparkasse &lt;service@spakrasse.de&gt;",
+          to: "Sie",
+          subject: "Dringend: Ihr Konto wurde gespert!",
+          body: `Sehr geehrter Kunnde,<br><br>
+          Ihr Konto wurde aus Sicherheitsgründen gespert. Bitte bestätigen Sie Ihre Identität, indem Sie sich <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">hier einlogen</a>.<br><br>
+          Vielen Dank,<br>Ihre Sparkasse`
+        },
         isPhishing: true,
-        explanation: "Dies ist Phishing. Die Absenderadresse ist gefälscht ('spakrasse' statt 'sparkasse') und der Link führt auf eine gefälschte Loginseite."
+        explanation: "Dies ist Phishing. Die Absenderadresse ist gefälscht ('spakrasse' statt 'sparkasse'), es gibt Rechtschreibfehler und der Link führt auf eine gefälschte Loginseite."
       },
       {
-        text: "Ein Freund schickt Ihnen einen Link zu einem geteilten Google-Dokument über WhatsApp. ",
+        // Kein Phishing
+        email: {
+          from: "Google Drive &lt;drive-noreply@google.com&gt;",
+          to: "Sie",
+          subject: "Ein Freund hat ein Dokument mit Ihnen geteilt",
+          body: `Hallo,<br><br>
+          Ihr Freund Max Mustermann hat ein Google-Dokument mit Ihnen geteilt.<br>
+          <a href="#" class="email-cta-link">Dokument ansehen</a><br><br>
+          Viele Grüße,<br>Ihr Google Drive Team`
+        },
         isPhishing: false,
         explanation: "Kein Phishing – die Quelle ist vertrauenswürdig, und der Link ist nachvollziehbar. Trotzdem sollte man bei unbekannten Links vorsichtig sein."
       },
       {
-        text: "Sie bekommen eine E-Mail mit dem Betreff 'Ihr Paket ist unterwegs' von einem unbekannten Absender und einem Link zur Sendungsverfolgung.",
+        // Phishing mit Rechtschreibfehlern
+        email: {
+          from: "DHL &lt;info@dhl-paket-tracking.com&gt;",
+          to: "Sie",
+          subject: "Ihr Packet ist unterwegz! Sendungsverfolgung hier",
+          body: `Sehr geehrter Künde,<br><br>
+          Ihr Packet ist auf dem Weg. Um die Sendung zu verfolgen, klicken Sie bitte auf <a href="#" class="email-cta-link">diesen Link</a>.<br><br>
+          Mit freundlichen Grüßen,<br>DHL Kundenservise`
+        },
         isPhishing: true,
-        explanation: "Das ist ein typischer Trick: Der Paketdienst ist nicht genannt, und die Mail enthält einen verdächtigen Link."
+        explanation: "Das ist ein typischer Trick: Der Paketdienst ist nicht genannt, die Mail enthält einen verdächtigen Link und mehrere Rechtschreibfehler."
       },
       {
-        text: "Sie erhalten eine E-Mail von Ihrer Bank mit der Aufforderung, Ihre Kontodaten zu aktualisieren. Der Link führt auf die offizielle Webseite der Bank.",
+        // Kein Phishing
+        email: {
+          from: "Ihre Bank &lt;kontakt@echtebank.de&gt;",
+          to: "Sie",
+          subject: "Bitte aktualisieren Sie Ihre Kontodaten",
+          body: `Sehr geehrte Frau Müller,<br><br>
+          Wir bitten Sie, Ihre Kontodaten auf unserer offiziellen Webseite zu überprüfen.<br>
+          <a href="https://www.echtebank.de" class="email-cta-link">Zur Bank-Webseite</a><br><br>
+          Freundliche Grüße,<br>Ihre Bank`
+        },
         isPhishing: false,
         explanation: "Kein Phishing, da der Link auf die offizielle Webseite führt und die Bank Sie persönlich anspricht. Dennoch sollte man vorsichtig bleiben."
       },
       {
-        text: "Eine Nachricht fordert Sie auf, sofort eine Rechnung zu bezahlen, die Sie nicht bestellt haben. Die E-Mail enthält eine ZIP-Datei als Anhang.",
+        // Phishing
+        email: {
+          from: "Rechnungsstelle &lt;rechnung@fakefirma.com&gt;",
+          to: "Sie",
+          subject: "Letzte Mahnung! Rechnung offen",
+          body: `Sehr geehrter Kunde,<br><br>
+          Bitte begleichen Sie die beigefügte Rechnung umgehend. Im Anhang finden Sie eine ZIP-Datei mit weiteren Details.<br><br>
+          Mit freundlichen Grüßen,<br>Ihr Rechnungsservice`
+        },
         isPhishing: true,
         explanation: "Phishing-Versuch mit schädlichem Anhang. Öffnen Sie keine unerwarteten Anhänge."
       },
       {
-        text: "Sie erhalten eine Nachricht von einem bekannten Onlineshop mit einem Sonderangebot, das zu gut klingt, um wahr zu sein.",
+        // Phishing mit Rechtschreibfehlern
+        email: {
+          from: "SuperShop &lt;angebot@supershop-deal.com&gt;",
+          to: "Sie",
+          subject: "Nur heute: IPhone 15 für 99€!",
+          body: `Hallo,<br><br>
+          Unser exklussives Angebot: Das neue IPhone 15 für nur 99€!<br>
+          <a href="#" class="email-cta-link">Jetzt sichern</a><br><br>
+          Ihr SuperShop Tem`
+        },
         isPhishing: true,
-        explanation: "Vorsicht bei zu guten Angeboten – oft eine Falle, um an Ihre Daten oder Geld zu kommen."
+        explanation: "Vorsicht bei zu guten Angeboten – oft eine Falle, um an Ihre Daten oder Geld zu kommen. Außerdem gibt es Rechtschreibfehler."
       },
       {
-        text: "Ein Kollege schickt Ihnen eine E-Mail mit einer ungewöhnlichen Anfrage, die Sie telefonisch verifizieren können.",
+        // Kein Phishing
+        email: {
+          from: "Kollege &lt;max.mustermann@firma.de&gt;",
+          to: "Sie",
+          subject: "Kurze Rückfrage",
+          body: `Hallo,<br><br>
+          Kannst du mir bitte die Datei von gestern nochmal schicken? Ruf mich kurz an, falls du Fragen hast.<br><br>
+          Viele Grüße,<br>Max`
+        },
         isPhishing: false,
         explanation: "Kein Phishing, da Sie den Absender kennen und die Anfrage bestätigt wurde."
       },
       {
-        text: "Sie bekommen eine E-Mail mit einem Link, der auf eine Webadresse mit vielen Tippfehlern und Sonderzeichen führt.",
+        // Phishing
+        email: {
+          from: "Support &lt;support@micros0ft-support.com&gt;",
+          to: "Sie",
+          subject: "Ihr Microsoft-Konto läuft ab!",
+          body: `Sehr geehrter Nutzer,<br><br>
+          Ihr Microsoft-Konto läuft in 24 Stunden ab. Bitte bestätigen Sie Ihre Daten <a href="#" class="email-cta-link">hier</a>.<br><br>
+          Ihr Microsoft Support`
+        },
         isPhishing: true,
         explanation: "Typisches Merkmal von Phishing-Links sind Rechtschreibfehler oder ungewöhnliche Domains."
       },
       {
-        text: "Eine E-Mail fordert Sie auf, Ihre Zugangsdaten per E-Mail zu bestätigen, um Ihr Konto zu sichern.",
+        // Phishing
+        email: {
+          from: "IT-Abteilung &lt;it@firma-support.com&gt;",
+          to: "Sie",
+          subject: "Wichtige Sicherheitsüberprüfung",
+          body: `Sehr geehrter Mitarbeiter,<br><br>
+          Bitte senden Sie uns Ihr Passwort zur Überprüfung.<br><br>
+          Mit freundlichen Grüßen,<br>Ihre IT-Abteilung`
+        },
         isPhishing: true,
         explanation: "Legitime Unternehmen fordern niemals per E-Mail die Herausgabe von Passwörtern."
       },
       {
-        text: "Sie bekommen eine Benachrichtigung von Ihrem E-Mail-Provider, dass Ihr Speicherplatz voll ist, und müssen über die offizielle Webseite aufräumen.",
+        // Kein Phishing
+        email: {
+          from: "Webmail &lt;noreply@echtemail.de&gt;",
+          to: "Sie",
+          subject: "Speicherplatz fast voll",
+          body: `Hallo,<br><br>
+          Ihr Speicherplatz ist fast voll. Bitte loggen Sie sich auf der offiziellen Webseite ein, um Platz zu schaffen.<br>
+          <a href="https://www.echtemail.de" class="email-cta-link">Webmail öffnen</a><br><br>
+          Ihr Webmail-Team`
+        },
         isPhishing: false,
         explanation: "Dies ist kein Phishing, wenn der Link auf die offizielle Webseite führt und die Nachricht legitim erscheint."
       }
@@ -186,7 +327,6 @@
     function startQuiz() {
       document.getElementById('quizBox').style.display = 'block';
       document.getElementById('result').textContent = '';
-      document.querySelector('.answer').style.display = '';
       document.getElementById('startBtn').style.display = 'none';
       current = 0;
       showQuestion();
@@ -194,18 +334,28 @@
 
     function showQuestion() {
       updateProgressBar();
+      const emailView = document.getElementById('emailView');
       if (current < questions.length) {
-        document.getElementById('question').textContent = questions[current].text;
+        document.getElementById('question').textContent = '';
+        // E-Mail anzeigen
+        const email = questions[current].email;
+        emailView.style.display = 'block';
+        emailView.innerHTML = `
+          <div class="email-header">
+            <div class="email-from">Von: ${email.from}</div>
+            <div class="email-to">An: ${email.to}</div>
+            <div class="email-subject">Betreff: ${email.subject}</div>
+          </div>
+          <div class="email-body">${email.body}</div>
+        `;
         document.getElementById('result').textContent = '';
-        document.querySelector('.answer').style.display = '';
+        document.getElementById('phishingChoice').style.display = 'flex';
         document.getElementById('nextBtn').style.display = 'none';
-        // Buttons wieder aktivieren
-        document.getElementById('btnPhishing').disabled = false;
-        document.getElementById('btnKeinPhishing').disabled = false;
       } else {
         document.getElementById('question').textContent = 'Quiz beendet!';
+        document.getElementById('emailView').style.display = 'none';
         document.getElementById('result').textContent = '';
-        document.querySelector('.answer').style.display = 'none';
+        document.getElementById('phishingChoice').style.display = 'none';
         document.getElementById('nextBtn').style.display = 'none';
         updateProgressBar();
       }
@@ -213,12 +363,11 @@
 
     function answer(userAnswer) {
       const q = questions[current];
-      const correct = userAnswer === q.isPhishing;
-      const feedback = correct ? "✅ Richtig! " : "❌ Falsch. ";
+      const feedback = userAnswer === q.isPhishing
+        ? "✅ Richtig! "
+        : "❌ Falsch. ";
       document.getElementById('result').textContent = feedback + q.explanation;
-      // Buttons deaktivieren, damit nicht mehrfach geantwortet werden kann
-      document.getElementById('btnPhishing').disabled = true;
-      document.getElementById('btnKeinPhishing').disabled = true;
+      document.getElementById('phishingChoice').style.display = 'none';
       document.getElementById('nextBtn').style.display = 'inline-block';
     }
 
