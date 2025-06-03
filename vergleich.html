@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Öffentliches vs. Privates Profil</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f9fb;
+      color: #333;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .profile-container {
+      max-width: 400px;
+      margin: 30px auto 0 auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #0001;
+      padding: 24px;
+      text-align: center;
+      position: relative;
+    }
+    .profile-pic {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #2c3e50;
+      margin-bottom: 12px;
+    }
+    .profile-name {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .profile-username {
+      color: #888;
+      margin-bottom: 12px;
+    }
+    .profile-bio {
+      margin-bottom: 16px;
+    }
+    .profile-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 16px;
+    }
+    .profile-stats div {
+      text-align: center;
+    }
+    .private-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      font-size: 1.1em;
+      color: #2c3e50;
+      z-index: 2;
+    }
+    .privacy-options {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 24px 0 0 0;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .privacy-options label {
+      font-weight: bold;
+      color: #2c3e50;
+      margin: 0 8px 0 0;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 16px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background-color: #ecf0f1;
+      font-size: 1.2em;
+    }
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+    .private-info {
+      opacity: 0.3;
+      font-style: italic;
+    }
+    .bio-strike {
+      text-decoration: line-through;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h1>Social Media Profil – Öffentlich vs. Privat</h1>
+
+  <div class="privacy-options" id="privacyOptions">
+    <label><input type="checkbox" id="bioPrivate"> Beschreibung privat</label>
+    <label><input type="checkbox" id="followersPrivate"> Follower privat</label>
+    <label><input type="checkbox" id="followingPrivate"> Abonniert privat</label>
+    <label><input type="checkbox" id="postsPrivate"> Beiträge privat</label>
+  </div>
+
+  <div class="profile-container" id="profile">
+    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profilbild" class="profile-pic">
+    <div class="profile-name" id="profileName">Max Mustermann</div>
+    <div class="profile-username" id="profileUsername">@maxmuster</div>
+    <div class="profile-bio" id="profileBio">
+      Willkommen auf meinem Profil! Ich liebe Webentwicklung, Reisen und guten Kaffee.
+    </div>
+    <div class="profile-stats" id="profileStats">
+      <div id="followersDiv">
+        <div id="followersCount" style="font-weight:bold;">1.234</div>
+        <div>Follower</div>
+      </div>
+      <div id="followingDiv">
+        <div id="followingCount" style="font-weight:bold;">567</div>
+        <div>Abonniert</div>
+      </div>
+      <div id="postsDiv">
+        <div id="postsCount" style="font-weight:bold;">42</div>
+        <div>Posts</div>
+      </div>
+    </div>
+    <div id="privateOverlay" class="private-overlay" style="display:none;">
+      <div style="font-size:2em; margin-bottom:10px;">🔒</div>
+      Dieses Profil ist privat.<br>
+      Folge, um die Inhalte zu sehen.
+    </div>
+  </div>
+
+  <table id="vergleichTabelle">
+    <tr>
+      <th>Aspekt</th>
+      <th id="thOeffentlich">Öffentliches Profil</th>
+      <th id="thPrivat">Privates Profil</th>
+    </tr>
+    <tr>
+      <td>Sichtbarkeit</td>
+      <td id="sichtbarkeitOeffentlich">Für alle im Internet sichtbar, auch ohne Anmeldung.</td>
+      <td id="sichtbarkeitPrivat">Nur für bestätigte Follower sichtbar.</td>
+    </tr>
+    <tr>
+      <td>Beschreibung</td>
+      <td id="bioOeffentlich">Profilbeschreibung ist sichtbar.</td>
+      <td id="bioPrivat">Profilbeschreibung ist ausgeblendet.</td>
+    </tr>
+    <tr>
+      <td>Follower</td>
+      <td id="followerOeffentlich">Follower-Zahl ist sichtbar.</td>
+      <td id="followerPrivat">Follower-Zahl ist ausgeblendet.</td>
+    </tr>
+    <tr>
+      <td>Abonniert</td>
+      <td id="followingOeffentlich">Abonniert-Zahl ist sichtbar.</td>
+      <td id="followingPrivat">Abonniert-Zahl ist ausgeblendet.</td>
+    </tr>
+    <tr>
+      <td>Beiträge</td>
+      <td id="postsOeffentlich">Beiträge sind sichtbar.</td>
+      <td id="postsPrivat">Beiträge sind ausgeblendet.</td>
+    </tr>
+    <tr>
+      <td>Datenschutz</td>
+      <td id="datenschutzOeffentlich">Gering – persönliche Infos sind leicht zugänglich.</td>
+      <td id="datenschutzPrivat">Höher – Daten sind nur eingeschränkt zugänglich.</td>
+    </tr>
+  </table>
+
+  <p style="margin-top: 40px; text-align: center;">
+    <a href="index.html">← Zurück zur Startseite</a>
+  </p>
+
+  <script>
+    const privateOverlay = document.getElementById('privateOverlay');
+    const profileStats = document.getElementById('profileStats');
+    const profileBio = document.getElementById('profileBio');
+    // Stats
+    const followersDiv = document.getElementById('followersDiv');
+    const followingDiv = document.getElementById('followingDiv');
+    const postsDiv = document.getElementById('postsDiv');
+    // Optionen
+    const bioPrivate = document.getElementById('bioPrivate');
+    const followersPrivate = document.getElementById('followersPrivate');
+    const followingPrivate = document.getElementById('followingPrivate');
+    const postsPrivate = document.getElementById('postsPrivate');
+    // Tabelle
+    const sichtbarkeitOeffentlich = document.getElementById('sichtbarkeitOeffentlich');
+    const sichtbarkeitPrivat = document.getElementById('sichtbarkeitPrivat');
+    const bioOeffentlich = document.getElementById('bioOeffentlich');
+    const bioPrivat = document.getElementById('bioPrivat');
+    const followerOeffentlich = document.getElementById('followerOeffentlich');
+    const followerPrivat = document.getElementById('followerPrivat');
+    const followingOeffentlich = document.getElementById('followingOeffentlich');
+    const followingPrivat = document.getElementById('followingPrivat');
+    const postsOeffentlich = document.getElementById('postsOeffentlich');
+    const postsPrivat = document.getElementById('postsPrivat');
+    const datenschutzOeffentlich = document.getElementById('datenschutzOeffentlich');
+    const datenschutzPrivat = document.getElementById('datenschutzPrivat');
+
+    function updateProfileParts() {
+      // Beschreibung
+      if (bioPrivate.checked) {
+        profileBio.classList.add('private-info');
+        profileBio.classList.add('bio-strike'); // NEU: Durchstreichen
+        bioOeffentlich.classList.add('private-info');
+        bioPrivat.classList.remove('private-info');
+      } else {
+        profileBio.classList.remove('private-info');
+        profileBio.classList.remove('bio-strike'); // NEU: Durchstreichen entfernen
+        bioOeffentlich.classList.remove('private-info');
+        bioPrivat.classList.add('private-info');
+      }
+      // Follower
+      if (followersPrivate.checked) {
+        followersDiv.classList.add('private-info');
+        followerOeffentlich.classList.add('private-info');
+        followerPrivat.classList.remove('private-info');
+      } else {
+        followersDiv.classList.remove('private-info');
+        followerOeffentlich.classList.remove('private-info');
+        followerPrivat.classList.add('private-info');
+      }
+      // Abonniert
+      if (followingPrivate.checked) {
+        followingDiv.classList.add('private-info');
+        followingOeffentlich.classList.add('private-info');
+        followingPrivat.classList.remove('private-info');
+      } else {
+        followingDiv.classList.remove('private-info');
+        followingOeffentlich.classList.remove('private-info');
+        followingPrivat.classList.add('private-info');
+      }
+      // Beiträge
+      if (postsPrivate.checked) {
+        postsDiv.classList.add('private-info');
+        postsOeffentlich.classList.add('private-info');
+        postsPrivat.classList.remove('private-info');
+      } else {
+        postsDiv.classList.remove('private-info');
+        postsOeffentlich.classList.remove('private-info');
+        postsPrivat.classList.add('private-info');
+      }
+      // Datenschutz
+      let privateCount = 0;
+      if (bioPrivate.checked) privateCount++;
+      if (followersPrivate.checked) privateCount++;
+      if (followingPrivate.checked) privateCount++;
+      if (postsPrivate.checked) privateCount++;
+      if (privateCount >= 2) {
+        datenschutzOeffentlich.classList.add('private-info');
+        datenschutzPrivat.classList.remove('private-info');
+      } else {
+        datenschutzOeffentlich.classList.remove('private-info');
+        datenschutzPrivat.classList.add('private-info');
+      }
+
+      // Wenn ALLE privat sind, Overlay anzeigen
+      if (
+        bioPrivate.checked &&
+        followersPrivate.checked &&
+        followingPrivate.checked &&
+        postsPrivate.checked
+      ) {
+        privateOverlay.style.display = 'flex';
+        profileStats.style.opacity = 0.3;
+        profileBio.style.opacity = 0.3;
+      } else {
+        privateOverlay.style.display = 'none';
+        profileStats.style.opacity = 1;
+        profileBio.style.opacity = 1;
+      }
+    }
+
+    bioPrivate.addEventListener('change', updateProfileParts);
+    followersPrivate.addEventListener('change', updateProfileParts);
+    followingPrivate.addEventListener('change', updateProfileParts);
+    postsPrivate.addEventListener('change', updateProfileParts);
+
+    // Initialzustand: Öffentlich
+    bioPrivate.checked = false;
+    followersPrivate.checked = false;
+    followingPrivate.checked = false;
+    postsPrivate.checked = false;
+    updateProfileParts();
+  </script>
+</body>
+</html>
