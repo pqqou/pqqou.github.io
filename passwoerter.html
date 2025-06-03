@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sichere Passwörter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 40px 30px 30px 30px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+      margin-bottom: 10px;
+    }
+    #feedback {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      max-width: 520px;
+      width: 100%;
+      box-sizing: border-box;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .weak {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .medium {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .strong {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    a {
+      display: inline-block;
+      margin-top: 30px;
+      text-decoration: none;
+      color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Sichere Passwörter</h1>
+    <p>Teste hier, wie sicher dein Passwort ist. Dein Passwort wird nicht gespeichert.</p>
+
+    <input type="text" id="passwordInput" placeholder="Passwort eingeben..." oninput="checkPassword()">
+    <div id="feedback"></div>
+    
+    <div style="margin-top: 40px;">
+      <a href="passwoerter-artikel.html">
+        <button style="padding: 12px 28px; font-size: 17px; background: #2c3e50; color: #fff; border: none; border-radius: 6px; cursor: pointer;">
+          Mehr erfahren
+        </button>
+      </a>
+    </div>
+    <a href="index.html">← Zurück zur Startseite</a>
+  </div>
+  <script>
+    function checkPassword() {
+      const pwd = document.getElementById("passwordInput").value;
+      const feedback = document.getElementById("feedback");
+
+      const hasUpper = /[A-Z]/.test(pwd);
+      const hasLower = /[a-z]/.test(pwd);
+      const hasNumber = /[0-9]/.test(pwd);
+      const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pwd);
+      const length = pwd.length;
+
+      if (!pwd) {
+        feedback.textContent = "";
+        feedback.className = "";
+        return;
+      }
+
+      // Neue Logik: Länge entscheidet zuerst, dann Vielfalt
+      let explanation = "";
+      if (length < 8) {
+        feedback.className = "weak";
+        explanation = "🔴 Schwaches Passwort.<br>Ein sicheres Passwort sollte mindestens 12 Zeichen lang sein. Kurze Passwörter sind sehr leicht zu knacken.";
+      } else if (length < 12) {
+        feedback.className = "medium";
+        explanation = "🟡 Mittelstarkes Passwort.<br>Dein Passwort ist schon etwas länger, aber noch nicht optimal. Empfohlen werden mindestens 12 Zeichen und eine Mischung aus Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen.";
+      } else {
+        // Ab 12 Zeichen: Prüfe Vielfalt
+        if (hasUpper && hasLower && hasNumber && hasSpecial) {
+          feedback.className = "strong";
+          explanation = "🟢 Starkes Passwort!<br>Dein Passwort ist lang genug und enthält Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen. Solche Passwörter sind sehr schwer zu erraten oder zu knacken. Noch besser ist es, wenn du ein Passwort verwendest, das keinen Bezug zu persönlichen Daten hat und einzigartig für jeden Dienst ist.";
+        } else {
+          feedback.className = "medium";
+          explanation = "🟡 Mittelstarkes Passwort.<br>Die Länge ist sehr gut! Noch sicherer wird es, wenn du zusätzlich Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen kombinierst.";
+        }
+      }
+
+      feedback.innerHTML = explanation;
+    }
+  </script>
+</body>
+</html>

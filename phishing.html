@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Phishing erkennen</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 40px 30px 30px 30px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1c5980;
+    }
+    .quiz-box {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #f7f7f7;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      display: none;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .answer {
+      margin-top: 20px;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      min-height: 40px;
+    }
+    .progress-container {
+      width: 100%;
+      background: #eaf2f8;
+      border-radius: 8px;
+      margin: 20px 0;
+      height: 28px;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(44,62,80,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .progress-bar {
+      background: #2980b9;
+      height: 100%;
+      border-radius: 8px 0 0 8px;
+      transition: width 0.3s;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+    .progress-label {
+      position: relative;
+      z-index: 2;
+      color: #2c3e50;
+      font-weight: bold;
+      font-size: 15px;
+      width: 100%;
+      text-align: center;
+    }
+    .next-btn {
+      margin-top: 25px;
+      display: none;
+    }
+    a {
+      display: inline-block;
+      margin-top: 30px;
+      text-decoration: none;
+      color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Phishing erkennen</h1>
+    <p>Lerne durch ein interaktives Quiz, wie du Phishing erkennst.</p>
+    <button id="startBtn" onclick="startQuiz()">Quiz starten</button>
+
+    <div class="quiz-box" id="quizBox">
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+        <span class="progress-label" id="progressLabel"></span>
+      </div>
+      <div class="question" id="question"></div>
+      <div class="answer">
+        <button onclick="answer(true)" id="btnPhishing">Phishing</button>
+        <button onclick="answer(false)" id="btnKeinPhishing">Kein Phishing</button>
+      </div>
+      <div class="result" id="result"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Weiter</button>
+    </div>
+
+    <div style="margin-top: 40px;">
+      <a href="phishing-artikel.html">
+        <button style="padding: 12px 28px; font-size: 17px; background: #2c3e50; color: #fff; border: none; border-radius: 6px; cursor: pointer;">
+          Mehr erfahren
+        </button>
+      </a>
+    </div>
+
+    <a href="index.html">← Zurück zur Startseite</a>
+  </div>
+  <script>
+    const questions = [
+      {
+        text: "Sie erhalten eine E-Mail von 'service@spakrasse.de', die behauptet, Ihr Konto sei gesperrt. Ein Link fordert Sie auf, sich sofort einzuloggen.",
+        isPhishing: true,
+        explanation: "Dies ist Phishing. Die Absenderadresse ist gefälscht ('spakrasse' statt 'sparkasse') und der Link führt auf eine gefälschte Loginseite."
+      },
+      {
+        text: "Ein Freund schickt Ihnen einen Link zu einem geteilten Google-Dokument über WhatsApp. ",
+        isPhishing: false,
+        explanation: "Kein Phishing – die Quelle ist vertrauenswürdig, und der Link ist nachvollziehbar. Trotzdem sollte man bei unbekannten Links vorsichtig sein."
+      },
+      {
+        text: "Sie bekommen eine E-Mail mit dem Betreff 'Ihr Paket ist unterwegs' von einem unbekannten Absender und einem Link zur Sendungsverfolgung.",
+        isPhishing: true,
+        explanation: "Das ist ein typischer Trick: Der Paketdienst ist nicht genannt, und die Mail enthält einen verdächtigen Link."
+      },
+      {
+        text: "Sie erhalten eine E-Mail von Ihrer Bank mit der Aufforderung, Ihre Kontodaten zu aktualisieren. Der Link führt auf die offizielle Webseite der Bank.",
+        isPhishing: false,
+        explanation: "Kein Phishing, da der Link auf die offizielle Webseite führt und die Bank Sie persönlich anspricht. Dennoch sollte man vorsichtig bleiben."
+      },
+      {
+        text: "Eine Nachricht fordert Sie auf, sofort eine Rechnung zu bezahlen, die Sie nicht bestellt haben. Die E-Mail enthält eine ZIP-Datei als Anhang.",
+        isPhishing: true,
+        explanation: "Phishing-Versuch mit schädlichem Anhang. Öffnen Sie keine unerwarteten Anhänge."
+      },
+      {
+        text: "Sie erhalten eine Nachricht von einem bekannten Onlineshop mit einem Sonderangebot, das zu gut klingt, um wahr zu sein.",
+        isPhishing: true,
+        explanation: "Vorsicht bei zu guten Angeboten – oft eine Falle, um an Ihre Daten oder Geld zu kommen."
+      },
+      {
+        text: "Ein Kollege schickt Ihnen eine E-Mail mit einer ungewöhnlichen Anfrage, die Sie telefonisch verifizieren können.",
+        isPhishing: false,
+        explanation: "Kein Phishing, da Sie den Absender kennen und die Anfrage bestätigt wurde."
+      },
+      {
+        text: "Sie bekommen eine E-Mail mit einem Link, der auf eine Webadresse mit vielen Tippfehlern und Sonderzeichen führt.",
+        isPhishing: true,
+        explanation: "Typisches Merkmal von Phishing-Links sind Rechtschreibfehler oder ungewöhnliche Domains."
+      },
+      {
+        text: "Eine E-Mail fordert Sie auf, Ihre Zugangsdaten per E-Mail zu bestätigen, um Ihr Konto zu sichern.",
+        isPhishing: true,
+        explanation: "Legitime Unternehmen fordern niemals per E-Mail die Herausgabe von Passwörtern."
+      },
+      {
+        text: "Sie bekommen eine Benachrichtigung von Ihrem E-Mail-Provider, dass Ihr Speicherplatz voll ist, und müssen über die offizielle Webseite aufräumen.",
+        isPhishing: false,
+        explanation: "Dies ist kein Phishing, wenn der Link auf die offizielle Webseite führt und die Nachricht legitim erscheint."
+      }
+    ];
+
+    let current = 0;
+
+    function startQuiz() {
+      document.getElementById('quizBox').style.display = 'block';
+      document.getElementById('result').textContent = '';
+      document.querySelector('.answer').style.display = '';
+      document.getElementById('startBtn').style.display = 'none';
+      current = 0;
+      showQuestion();
+    }
+
+    function showQuestion() {
+      updateProgressBar();
+      if (current < questions.length) {
+        document.getElementById('question').textContent = questions[current].text;
+        document.getElementById('result').textContent = '';
+        document.querySelector('.answer').style.display = '';
+        document.getElementById('nextBtn').style.display = 'none';
+        // Buttons wieder aktivieren
+        document.getElementById('btnPhishing').disabled = false;
+        document.getElementById('btnKeinPhishing').disabled = false;
+      } else {
+        document.getElementById('question').textContent = 'Quiz beendet!';
+        document.getElementById('result').textContent = '';
+        document.querySelector('.answer').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'none';
+        updateProgressBar();
+      }
+    }
+
+    function answer(userAnswer) {
+      const q = questions[current];
+      const correct = userAnswer === q.isPhishing;
+      const feedback = correct ? "✅ Richtig! " : "❌ Falsch. ";
+      document.getElementById('result').textContent = feedback + q.explanation;
+      // Buttons deaktivieren, damit nicht mehrfach geantwortet werden kann
+      document.getElementById('btnPhishing').disabled = true;
+      document.getElementById('btnKeinPhishing').disabled = true;
+      document.getElementById('nextBtn').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+      current++;
+      showQuestion();
+    }
+
+    function updateProgressBar() {
+      const progressBar = document.getElementById('progressBar');
+      const progressLabel = document.getElementById('progressLabel');
+      const total = questions.length;
+      let value = current;
+      if (value > total) value = total;
+      const percent = (value / total) * 100;
+      progressBar.style.width = percent + "%";
+      progressLabel.textContent = `Frage ${Math.min(current + 1, total)}/${total}`;
+    }
+  </script>
+</body>
+</html>

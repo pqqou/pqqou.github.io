@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Profil-Check-Simulator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f2f2f2;
+      color: #333;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input[type=checkbox] {
+      margin-right: 10px;
+    }
+    #result {
+      font-weight: bold;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      transition: background-color 0.3s, border-left-color 0.3s;
+    }
+    .result-good {
+      background-color: #eafaf1;
+      border-left: 4px solid #2ecc71;
+      color: #155724;
+    }
+    .result-warning {
+      background-color: #fffbe6;
+      border-left: 4px solid #ffbe2e;
+      color: #856404;
+    }
+    .result-bad {
+      background-color: #fdeaea;
+      border-left: 4px solid #e74c3c;
+      color: #721c24;
+    }
+    button {
+      background-color: #2980b9;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #3498db;
+    }
+  </style>
+</head>
+<body>
+  <h1>Profil-Check-Simulator</h1>
+  <div class="section">
+    <p>Klicke an, was bei deinem (fiktiven oder echten) Social-Media-Profil öffentlich sichtbar ist:</p>
+    <form id="profileForm">
+      <label><input type="checkbox" name="info" value="1"> Profilbild</label>
+      <label><input type="checkbox" name="info" value="1"> Vollständiger Name</label>
+      <label><input type="checkbox" name="info" value="1"> Geburtstag</label>
+      <label><input type="checkbox" name="info" value="1"> Standort / Wohnort</label>
+      <label><input type="checkbox" name="info" value="1"> Beziehungsstatus</label>
+      <label><input type="checkbox" name="info" value="1"> Arbeitgeber / Schule</label>
+      <label><input type="checkbox" name="info" value="1"> Interessen (Musik, Filme etc.)</label>
+      <label><input type="checkbox" name="info" value="1"> Fotos / Videos</label>
+      <label><input type="checkbox" name="info" value="1"> Öffentliche Freunde / Follower</label>
+      <label><input type="checkbox" name="info" value="1"> Öffentliche Beiträge / Storys</label>
+      <button type="button" onclick="calculateRisk()">Risiko berechnen</button>
+    </form>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function calculateRisk() {
+      const checkboxes = document.querySelectorAll('input[name="info"]:checked');
+      const count = checkboxes.length;
+      const result = document.getElementById('result');
+      let message = '';
+      result.className = '';
+
+      if (count <= 3) {
+        message = '🟢 Sehr gut! Du gibst nur sehr wenige Informationen preis.';
+        result.classList.add('result-good');
+      } else if (count <= 6) {
+        message = '🟠 Achtung! Dein Profil gibt einige Informationen preis, die Dritte ausnutzen könnten.';
+        result.classList.add('result-warning');
+      } else {
+        message = '🔴 Kritisch! Dein Profil enthält viele persönliche Daten und sollte dringend überarbeitet werden.';
+        result.classList.add('result-bad');
+      }
+
+      result.textContent = message;
+    }
+  </script>
+</body>
+</html>
