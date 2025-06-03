@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Fake-Shop Impressum</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f9fb; color: #222; padding: 40px; }
+    .container { max-width: 500px; margin: 60px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 32px; text-align: center; }
+    .fake-impressum { font-size: 1.1em; color: #c0392b; margin: 40px 0; border: 2px dashed #e67e22; border-radius: 8px; padding: 32px 0; cursor: pointer; }
+    .fake-impressum.found { background: #f6ddcc; color: #c0392b; border-color: #c0392b; }
+    .btn { margin-top: 30px; padding: 12px 28px; background: #2980b9; color: #fff; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; text-decoration: none; }
+    .btn:hover { background: #1a5276; }
+    .impressum-title { font-size: 1.3em; font-weight: bold; margin-bottom: 18px; }
+    .impressum-content { color: #444; margin-bottom: 18px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="impressum-title">Impressum</div>
+    <div class="impressum-content">
+      SuperDealz24 GmbH<br>
+      Musterstraße 123<br>
+      12345 Musterstadt<br>
+      Geschäftsführer: Max Mustermann<br>
+      Handelsregister: HRB 123456<br>
+      USt-IdNr.: DE999999999<br>
+      <br>
+    </div>
+    <div class="fake-impressum" id="impressumError">Das impressum ist gefälscht oder unvollständig.</div>
+    <a href="fakeshop-spiel.html#found-navImpressum" class="btn">Zurück zum Shop</a>
+  </div>
+  <script>
+    // Fortschritt erhalten
+    function markImpressumFound() {
+      let found = {};
+      try { found = JSON.parse(localStorage.getItem('fakeshop_found')) || {}; } catch {}
+      found['navImpressum'] = true;
+      localStorage.setItem('fakeshop_found', JSON.stringify(found));
+    }
+    document.getElementById('impressumError').onclick = function() {
+      this.classList.add('found');
+      markImpressumFound();
+      alert("Achtung: Das Impressum ist offensichtlich gefälscht oder unvollständig!");
+    };
+    // Beim Laden ggf. bereits gefunden markieren
+    (function() {
+      let found = {};
+      try { found = JSON.parse(localStorage.getItem('fakeshop_found')) || {}; } catch {}
+      if (found['navImpressum']) document.getElementById('impressumError').classList.add('found');
+    })();
+  </script>
+</body>
+</html>

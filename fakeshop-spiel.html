@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Fake-Shop – Finde die Fehler!</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f9fb; color: #222; padding: 0; margin: 0; }
+    .shop-header-bar {
+      background: #2980b9;
+      color: #fff;
+      padding: 18px 0;
+      text-align: center;
+      font-size: 2em;
+      font-weight: bold;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px #0002;
+    }
+    .shop-nav {
+      background: #f4f4f4;
+      padding: 12px 0;
+      text-align: center;
+      border-bottom: 1px solid #e1e1e1;
+    }
+    .shop-nav a {
+      margin: 0 18px;
+      color: #2980b9;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .shop-nav a:hover { color: #c0392b; }
+    .shop-main {
+      max-width: 1100px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #0001;
+      padding: 32px 24px 24px 24px;
+      position: relative;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin: 32px 0;
+    }
+    .product {
+      background: #f8f8f8;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px #0001;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .product-img {
+      width: 160px;
+      height: 160px;
+      background: #eee;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5em;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+    }
+    .product-img:hover { box-shadow: 0 0 0 3px #e67e22; }
+    .product-title {
+      font-size: 1.1em;
+      font-weight: bold;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+    .product-price {
+      color: #27ae60;
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .product-price:hover { color: #e67e22; }
+    .buy-btn {
+      padding: 10px 22px;
+      background: #c0392b;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .buy-btn:hover { background: #a93226; }
+    .shop-footer {
+      margin-top: 40px;
+      color: #888;
+      font-size: 0.98em;
+      text-align: center;
+      border-top: 1px solid #eee;
+      padding-top: 18px;
+    }
+    .payment-methods {
+      margin-top: 10px;
+      color: #c0392b;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-block;
+      border-bottom: 1px dashed #c0392b;
+    }
+    .fake-badge {
+      background: #e67e22;
+      color: #fff;
+      font-size: 0.9em;
+      border-radius: 6px;
+      padding: 2px 10px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .found {
+      background: #f6ddcc !important;
+      color: #c0392b !important;
+      border-color: #c0392b !important;
+      box-shadow: 0 0 0 3px #c0392b !important;
+    }
+    .feedback-bar {
+      position: fixed;
+      left: 50%;
+      bottom: 32px;
+      transform: translateX(-50%);
+      background: #fffbe6;
+      color: #c0392b;
+      border: 2px solid #e67e22;
+      border-radius: 8px;
+      padding: 16px 32px;
+      font-size: 1.1em;
+      box-shadow: 0 4px 24px #0002;
+      z-index: 9999;
+      display: none;
+      min-width: 260px;
+      text-align: center;
+      animation: fadein 0.2s;
+    }
+    @keyframes fadein {
+      from { opacity: 0; bottom: 0; }
+      to { opacity: 1; bottom: 32px; }
+    }
+    .fake-bewertung {
+      color: #e67e22;
+      font-style: italic;
+      cursor: pointer;
+      border-bottom: 1px dashed #e67e22;
+      margin: 0 2px;
+    }
+    .fake-bewertung:hover { color: #c0392b; }
+    .fake-seal {
+      display: inline-block;
+      background: #eee;
+      color: #888;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      line-height: 48px;
+      text-align: center;
+      font-size: 1.3em;
+      margin-left: 12px;
+      border: 2px solid #bbb;
+      cursor: pointer;
+      vertical-align: middle;
+      transition: border 0.2s, color 0.2s;
+    }
+    .fake-seal:hover {
+      border: 2px solid #e67e22;
+      color: #e67e22;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+    .win-popup {
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 4px 24px #0002;
+    }
+    .win-popup h2 {
+      font-size: 1.5em;
+      margin-bottom: 16px;
+      color: #2980b9;
+    }
+    .win-popup .gift {
+      font-size: 3em;
+      margin-bottom: 16px;
+    }
+    .win-popup p {
+      font-size: 1.1em;
+      margin-bottom: 24px;
+      color: #555;
+    }
+    .win-popup .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #c0392b;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      transition: background 0.3s;
+    }
+    .win-popup .btn:hover {
+      background: #a93226;
+    }
+  </style>
+</head>
+<body>
+  <div class="shop-header-bar">
+    SuperDealz24 <span class="fake-badge" id="badgeFake">Trusted Shop</span>
+    <span class="fake-seal" id="sealFake">✓</span>
+  </div>
+  <nav class="shop-nav">
+    <a href="fakeshop-impressum.html" id="navImpressum">Impressum</a>
+    <a href="fakeshop-bewertungen.html" id="navBewertungen">Bewertungen</a>
+    <a href="fakeshop-kontakt.html" id="navKontakt">Kontakt</a>
+    <a href="#" id="navAGB">AGB</a>
+  </nav>
+  <div class="shop-main">
+    <div class="products-grid">
+      <div class="product">
+        <div class="product-img" id="imgFake1">
+          <span style="font-size:3em; color:#bbb;">&#128683;</span>
+        </div>
+        <div class="product-title">Apple iPhone 15 Pro Max</div>
+        <div class="product-price" id="priceFake1">nur 499,00 €</div>
+        <button class="buy-btn">Jetzt kaufen</button>
+      </div>
+      <div class="product">
+        <div class="product-img" id="imgFake2">
+          <span style="font-size:3em; color:#bbb;">&#128683;</span>
+        </div>
+        <div class="product-title">MacBook Pro 16"</div>
+        <div class="product-price" id="priceFake2">nur 799,00 €</div>
+        <button class="buy-btn">Jetzt kaufen</button>
+      </div>
+      <div class="product">
+        <div class="product-img" id="imgFake3">
+          <span style="font-size:3em; color:#bbb;">&#128683;</span>
+        </div>
+        <div class="product-title">AirPods Pro</div>
+        <div class="product-price" id="priceFake3">nur 59,00 €</div>
+        <button class="buy-btn">Jetzt kaufen</button>
+      </div>
+      <div class="product">
+        <div class="product-img" id="imgFake4">
+          <span style="font-size:3em; color:#bbb;">&#128683;</span>
+        </div>
+        <div class="product-title">Apple Watch Ultra</div>
+        <div class="product-price" id="priceFake4">nur 129,00 €</div>
+        <button class="buy-btn">Jetzt kaufen</button>
+      </div>
+      <div class="product">
+        <div class="product-img" id="imgFake5">
+          <span style="font-size:3em; color:#bbb;">&#128683;</span>
+        </div>
+        <div class="product-title">Samsung Galaxy S23</div>
+        <div class="product-price" id="priceFake5">nur 299,00 €</div>
+        <button class="buy-btn">Jetzt kaufen</button>
+      </div>
+      <div class="product">
+        <div class="product-img" id="imgFake6">
+          <span style="font-size:3em; color:#bbb;">&#128683;</span>
+        </div>
+        <div class="product-title">Canon EOS R8</div>
+        <div class="product-price" id="priceFake6">nur 399,00 €</div>
+        <button class="buy-btn">Jetzt kaufen</button>
+      </div>
+    </div>
+    <div style="margin: 30px 0 0 0; text-align:center;">
+      <span class="fake-bewertung" id="bewertungFake1">"Super schneller Versand, alles top!"</span>
+      <span class="fake-bewertung" id="bewertungFake2">"Bester Shop, immer wieder gern."</span>
+      <span class="fake-bewertung" id="bewertungFake3">"Ware kam nie an, aber Support war nett."</span>
+    </div>
+    <div class="shop-footer">
+      © 2024 SuperDealz24 - Alle Rechte vorbehalten. <br>
+      <span class="payment-methods" id="footerPayment">Nur Vorkasse per Überweisung möglich.</span>
+    </div>
+  </div>
+  <div class="feedback-bar" id="feedbackBar"></div>
+  <div id="winOverlay" class="overlay" style="display:none;">
+    <div class="win-popup">
+      <h2>Glückwunsch!<br>Alle Fehler gefunden!</h2>
+      <div class="gift">🏆</div>
+      <p>Du hast alle typischen Fake-Shop-Merkmale entdeckt.<br>Bleib auch im echten Netz immer wachsam!</p>
+      <a href="fakeshops.html" class="btn">Zurück zur Übersicht</a>
+    </div>
+  </div>
+  <script>
+    // Fehlerhafte Elemente und Hinweise
+    const errors = [
+      // Die "any"-Fehler dürfen NICHT doppelt im Array stehen, entferne priceFake1 und bewertungFake1!
+      {
+        id: "badgeFake",
+        msg: "Das 'Trusted Shop'-Siegel ist gefälscht."
+      },
+      {
+        id: "sealFake",
+        msg: "Das Gütesiegel ist nicht echt."
+      },
+      {
+        id: "navImpressum",
+        msg: "Kein echtes Impressum vorhanden!",
+        page: "fakeshop-impressum.html"
+      },
+      {
+        id: "navBewertungen",
+        msg: "Bewertungen sind gefälscht oder fehlen!",
+        page: "fakeshop-bewertungen.html"
+      },
+      {
+        id: "navKontakt",
+        msg: "Kontaktformular führt ins Leere!",
+        page: "fakeshop-kontakt.html"
+      },
+      {
+        id: "navAGB",
+        msg: "AGB-Link funktioniert nicht."
+      },
+      {
+        id: "footerPayment",
+        msg: "Nur Vorkasse per Überweisung – unseriös!"
+      },
+      {
+        id: "anyImg",
+        msg: "Produktbild ist ein Symbol, kein echtes Foto."
+      },
+      {
+        id: "anyPrice",
+        msg: "Extrem günstiger Preis – zu schön, um wahr zu sein!"
+      },
+      {
+        id: "anyBewertung",
+        msg: "Bewertung ist offensichtlich gefälscht."
+      }
+    ];
+    let found = {};
+    let foundCount = 0;
+    const feedbackBar = document.getElementById('feedbackBar');
+
+    // Fortschritt aus localStorage laden (auch von Unterseiten)
+    function loadFound() {
+      try {
+        const f = JSON.parse(localStorage.getItem('fakeshop_found'));
+        // Nur übernehmen, wenn wir von einer Unterseite zurückkommen (Hash vorhanden)
+        if (window.location.hash && f && typeof f === 'object') {
+          found = f;
+        } else {
+          found = {};
+        }
+      } catch { found = {}; }
+    }
+    function saveFound() {
+      // Nur speichern, wenn wir auf eine Unterseite gehen
+      if (window._fakeshop_save_progress) {
+        localStorage.setItem('fakeshop_found', JSON.stringify(found));
+      }
+    }
+
+    // Beim Laden: bereits gefundene Fehler markieren
+    loadFound();
+    errors.forEach(err => {
+      if (err.id === "anyImg" || err.id === "anyPrice" || err.id === "anyBewertung") {
+        // handled by bindAnyImg/bindAnyPrice/bindAnyBewertung
+        return;
+      }
+      const el = document.getElementById(err.id);
+      if (el && found[err.id]) {
+        el.classList.add('found');
+      }
+    });
+    bindAnyImg();
+    bindAnyPrice();
+    bindAnyBewertung();
+
+    function showFeedback(msg) {
+      feedbackBar.textContent = msg;
+      feedbackBar.style.display = 'block';
+      setTimeout(() => { feedbackBar.style.display = 'none'; }, 4400);
+    }
+
+    function markFound(id) {
+      found[id] = true;
+      const el = document.getElementById(id);
+      if (el) el.classList.add('found');
+    }
+
+    function handleErrorClick(err) {
+      if (!found[err.id]) {
+        markFound(err.id);
+        showFeedback(err.msg);
+      }
+    }
+
+    function checkWin() {
+      // Prüfe, ob alle Fehler gefunden wurden (anyImg, anyPrice, anyBewertung zählen als EIN Fehler)
+      let allFound = errors.every(err => {
+        if (err.id === "anyImg") return found["anyImg"];
+        if (err.id === "anyPrice") return found["anyPrice"];
+        if (err.id === "anyBewertung") return found["anyBewertung"];
+        return found[err.id];
+      });
+      if (allFound) {
+        document.getElementById('winOverlay').style.display = 'flex';
+        localStorage.removeItem('fakeshop_found');
+      }
+    }
+
+    // Fehler-Elemente binden
+    errors.forEach(err => {
+      if (err.id === "anyImg" || err.id === "anyPrice" || err.id === "anyBewertung") return;
+      const el = document.getElementById(err.id);
+      if (el) {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', function(e) {
+          if (err.page) {
+            window._fakeshop_save_progress = true;
+            markFound(err.id);
+            saveFound();
+            showFeedback(err.msg + " (Details auf der Unterseite)");
+            setTimeout(() => { window.location.href = err.page; }, 1200);
+            return;
+          }
+          if (err.id === "navAGB") {
+            e.preventDefault();
+          }
+          handleErrorClick(err);
+          checkWin();
+        });
+      }
+    });
+
+    // Spezialfall: Nur ein beliebiges Produktbild muss gefunden werden
+    function bindAnyImg() {
+      if (found["anyImg"]) {
+        for (let i = 1; i <= 6; i++) {
+          const imgEl = document.getElementById('imgFake' + i);
+          if (imgEl) imgEl.classList.add('found');
+        }
+        return;
+      }
+      for (let i = 1; i <= 6; i++) {
+        const imgEl = document.getElementById('imgFake' + i);
+        if (imgEl) {
+          imgEl.style.cursor = 'pointer';
+          imgEl.addEventListener('click', function () {
+            if (!found["anyImg"]) {
+              found["anyImg"] = true;
+              for (let j = 1; j <= 6; j++) {
+                const el = document.getElementById('imgFake' + j);
+                if (el) el.classList.add('found');
+              }
+              showFeedback(errors.find(e => e.id === "anyImg").msg);
+              checkWin();
+            }
+          });
+        }
+      }
+    }
+
+    // Spezialfall: Nur ein beliebiger Preis muss gefunden werden
+    function bindAnyPrice() {
+      if (found["anyPrice"]) {
+        for (let i = 1; i <= 6; i++) {
+          const priceEl = document.getElementById('priceFake' + i);
+          if (priceEl) priceEl.classList.add('found');
+        }
+        return;
+      }
+      for (let i = 1; i <= 6; i++) {
+        const priceEl = document.getElementById('priceFake' + i);
+        if (priceEl) {
+          priceEl.style.cursor = 'pointer';
+          priceEl.addEventListener('click', function () {
+            if (!found["anyPrice"]) {
+              found["anyPrice"] = true;
+              for (let j = 1; j <= 6; j++) {
+                const el = document.getElementById('priceFake' + j);
+                if (el) el.classList.add('found');
+              }
+              showFeedback(errors.find(e => e.id === "anyPrice").msg);
+              checkWin();
+            }
+          });
+        }
+      }
+    }
+
+    // Spezialfall: Nur ein beliebiger Kommentar muss gefunden werden
+    function bindAnyBewertung() {
+      if (found["anyBewertung"]) {
+        for (let i = 1; i <= 3; i++) {
+          const bewEl = document.getElementById('bewertungFake' + i);
+          if (bewEl) bewEl.classList.add('found');
+        }
+        return;
+      }
+      for (let i = 1; i <= 3; i++) {
+        const bewEl = document.getElementById('bewertungFake' + i);
+        if (bewEl) {
+          bewEl.style.cursor = 'pointer';
+          bewEl.addEventListener('click', function () {
+            if (!found["anyBewertung"]) {
+              found["anyBewertung"] = true;
+              for (let j = 1; j <= 3; j++) {
+                const el = document.getElementById('bewertungFake' + j);
+                if (el) el.classList.add('found');
+              }
+              showFeedback(errors.find(e => e.id === "anyBewertung").msg);
+              checkWin();
+            }
+          });
+        }
+      }
+    }
+
+    // Nach Rückkehr von Unterseite: Hash entfernen und Fortschritt zurücksetzen
+    if (!window.location.hash) {
+      localStorage.removeItem('fakeshop_found');
+    }
+  </script>
+</body>
+</html>

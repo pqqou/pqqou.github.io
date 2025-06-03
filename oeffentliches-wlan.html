@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Öffentliches WLAN – Vorsicht Falle!</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f9fb;
+      color: #222;
+      padding: 40px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 40px;
+    }
+    .big-btn {
+      font-size: 2em;
+      padding: 32px 64px;
+      background: #e67e22;
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      margin-top: 60px;
+      box-shadow: 0 4px 16px #0002;
+      transition: background 0.2s;
+    }
+    .big-btn:hover {
+      background: #ca6f1e;
+    }
+    .hint {
+      margin-top: 40px;
+      color: #888;
+      font-size: 1.1em;
+    }
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .fake-popup {
+      background: #fffbe6;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px #0003;
+      padding: 36px 32px 28px 32px;
+      min-width: 320px;
+      min-height: 180px;
+      position: relative;
+      text-align: center;
+      animation: popin 0.2s;
+    }
+    @keyframes popin {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .popup-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      font-size: 1.7em;
+      color: #e74c3c;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .popup-close:hover {
+      color: #c0392b;
+    }
+    .popup-title {
+      color: #e67e22;
+      font-size: 1.3em;
+      margin-bottom: 18px;
+      margin-top: 0;
+    }
+    .popup-locked {
+      font-size: 2em;
+      margin: 18px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Öffentliches WLAN – Vorsicht Falle!</h1>
+  <button class="big-btn" id="trapBtn">Kostenloses WLAN nutzen</button>
+  <div class="hint">(Achtung: Nicht jeder Klick ist harmlos!)</div>
+  <div id="popupOverlay" class="popup-overlay" style="display:none;">
+    <div class="fake-popup" id="popupContent">
+      <button class="popup-close" id="popupCloseBtn" title="Schließen">&times;</button>
+      <div class="popup-title">Du bist im öffentlichen WLAN gefangen!</div>
+      <div class="popup-locked">🔒</div>
+      <div id="closeCounter" style="margin: 12px 0 8px 0; font-size:1.1em; color:#e67e22;">
+        Fenster geschlossen: <span id="closeCountDisplay">0</span> / 20
+      </div>
+      <p>Dieses Fenster lässt sich nicht dauerhaft schließen.<br>Nur ein Neuladen der Seite hilft weiter.</p>
+    </div>
+  </div>
+  <p style="margin-top: 60px;">
+    <a href="index.html">← Zurück zur Startseite</a>
+  </p>
+  <script>
+    const overlay = document.getElementById('popupOverlay');
+    const closeBtn = document.getElementById('popupCloseBtn');
+    const popupContent = document.getElementById('popupContent');
+    const closeCountDisplay = document.getElementById('closeCountDisplay');
+    let closeCount = 0;
+
+    document.getElementById('trapBtn').onclick = function() {
+      overlay.style.display = 'flex';
+    };
+
+    closeBtn.onclick = function() {
+      if (closeCount < 20) closeCount++;
+      if (closeCountDisplay) closeCountDisplay.textContent = closeCount;
+      if (closeCount >= 20) {
+        popupContent.innerHTML = `
+          <button class="popup-close" id="popupCloseBtn" title="Schließen">&times;</button>
+          <div class="popup-title">Herzlichen Glückwunsch zur Hartnäckigkeit!</div>
+          <div class="popup-locked" style="font-size:3em;">🎁</div>
+          <div id="closeCounter" style="margin: 12px 0 8px 0; font-size:1.1em; color:#e67e22;">
+            Schließen-Versuche: <span id="closeCountDisplay">${closeCount}</span> / 20
+          </div>
+          <p>Du hast das Fenster <b>20 Mal</b> geschlossen.<br>
+          Hier ist dein Geschenk: <span style="font-size:1.5em;">🦸‍♂️</span><br>
+          <span style="color:#27ae60;">Du bist ein echter Durchhalter!</span></p>
+          <p style="color:#888;">Aber das Fenster lässt sich trotzdem nicht schließen.<br>Nur ein Neuladen der Seite hilft weiter.</p>
+        `;
+        document.getElementById('popupCloseBtn').onclick = closeBtn.onclick;
+      } else {
+        overlay.style.display = 'none';
+        setTimeout(() => {
+          overlay.style.display = 'flex';
+          // Zähler nach dem erneuten Öffnen aktualisieren
+          const display = document.getElementById('closeCountDisplay');
+          if (display) display.textContent = closeCount;
+        }, 100);
+      }
+    };
+    // Zähler initial anzeigen, falls Overlay direkt geöffnet wird
+    if (closeCountDisplay) closeCountDisplay.textContent = closeCount;
+  </script>
+</body>
+</html>

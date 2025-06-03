@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Klicken – aber richtig!</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f9fb;
+      color: #222;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .section {
+      max-width: 700px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #0001;
+      padding: 28px 24px;
+    }
+    .danger {
+      color: #c0392b;
+      font-weight: bold;
+    }
+    .fake-link, .real-link, .popup-link, .js-link, .download-link, .hover-link, .hidden-link, .idn-link, .mail-link {
+      display: inline-block;
+      margin: 8px 0;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .fake-link { color: #2c3e50; }
+    .fake-link:hover { color: #e74c3c; }
+    .real-link { color: #27ae60; }
+    .popup-link { color: #2c3e50; }
+    .popup-link:hover { color: #2980b9; }
+    .js-link { color: #2c3e50; }
+    .js-link:hover { color: #f39c12; }
+    .download-link { color: #2c3e50; }
+    .download-link:hover { color: #8e44ad; }
+    .hover-link { color: #2c3e50; border-bottom: 1px dashed #16a085; }
+    .hover-link:hover { color: #16a085; }
+    .hidden-link { color: #2c3e50; background: #f7f7f7; border-radius: 3px; }
+    .hidden-link span { color: #f7f7f7; }
+    .idn-link { color: #2c3e50; }
+    .idn-link:hover { color: #e67e22; }
+    .mail-link { color: #2c3e50; }
+    .mail-link:hover { color: #c0392b; }
+    .btn {
+      padding: 8px 16px;
+      background: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 8px 0;
+      font-size: 1em;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #217dbb; }
+    .feedback {
+      margin: 24px 0 0 0;
+      background: #eaf6ff;
+      border-left: 4px solid #3498db;
+      padding: 14px 18px;
+      border-radius: 6px;
+      min-height: 36px;
+      font-size: 1.08em;
+    }
+    .phishing-img {
+      width: 100%;
+      max-width: 400px;
+      display: block;
+      margin: 18px auto 0 auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    .small {
+      font-size: 0.95em;
+      color: #888;
+    }
+    .hidden {
+      display: none;
+    }
+    /* Kaschierung: Fake-Links wie echte gestalten */
+    .fake-link::after {
+      content: '';
+    }
+    /* Kaschierung: Download-Link wie PDF-Link */
+    .download-link::before {
+      content: url('data:image/svg+xml;utf8,<svg width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M7 1v8M7 9l-3-3m3 3l3-3" stroke="%238e44ad" stroke-width="2" fill="none"/><rect x="2" y="11" width="10" height="2" rx="1" fill="%238e44ad"/></svg>');
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    /* Kaschierung: IDN-Link wie echter Wikipedia-Link */
+    .idn-link {
+      font-family: 'Arial', monospace;
+      letter-spacing: 0.01em;
+    }
+    /* Kaschierung: Hidden-Link */
+    .hidden-link span {
+      position: absolute;
+      left: -9999px;
+    }
+    /* Kaschierung: Fake-Formular */
+    .fake-form {
+      margin-top: 18px;
+      background: #f9f9f9;
+      padding: 14px 18px;
+      border-radius: 6px;
+      border: 1px solid #eee;
+      max-width: 350px;
+    }
+    .fake-form input[type="text"], .fake-form input[type="password"] {
+      width: 90%;
+      padding: 6px;
+      margin: 6px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+    .fake-form label {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.98em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Klicken – aber richtig!</h1>
+  <div class="section">
+    <h2>Teste dein Klick-Verhalten</h2>
+    <p>
+      Im Internet lauern viele Fallen beim Klicken auf Links, Buttons oder Popups.<br>
+      Erkennst du alle Tricks? Probiere es aus!
+    </p>
+    <ul>
+      <li><a href="https://www.wikipedia.org" class="real-link" id="realLink">Wikipedia (sicherer Link)</a></li>
+      <li><a href="https://gewinnspiel-aktion.com/iphone" class="fake-link" id="fakeLink">Kostenloses iPhone gewinnen!</a></li>
+      <li><a href="#" class="popup-link" id="popupLink">Jetzt exklusives Angebot ansehen</a></li>
+      <li><a href="#" class="js-link" id="jsLink">Hier klicken für Überraschung</a></li>
+      <li><a href="#" class="download-link" id="downloadLink">Rechnung_2024.pdf</a></li>
+      <li><a href="#" class="hover-link" id="hoverLink">Hier klicken für mehr Infos</a></li>
+      <li><a href="https://www.google.com" class="hidden-link" id="hiddenLink"><span>Versteckter Link</span>Hier klicken</a></li>
+      <li><a href="http://xn--wikipedia-4k2e.de" class="idn-link" id="idnLink">wіkіреdіа.de</a></li>
+      <li><a href="mailto:support@micros0ft.com" class="mail-link" id="mailLink">support@micros0ft.com</a></li>
+    </ul>
+    <form class="fake-form" id="fakeForm" autocomplete="off">
+      <label for="user">Benutzername:</label>
+      <input type="text" id="user" name="user" autocomplete="off">
+      <label for="pw">Passwort:</label>
+      <input type="password" id="pw" name="pw" autocomplete="off">
+      <button class="btn" type="submit">Anmelden</button>
+      <span class="small">(Fake-Login-Formular)</span>
+    </form>
+    <div class="feedback" id="feedback">Klicke auf die verschiedenen Elemente und achte auf die Hinweise!</div>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Phishing_Email_Example.png/600px-Phishing_Email_Example.png" alt="Phishing Beispiel" class="phishing-img">
+    <div class="small" style="margin-top:10px;">
+      <b>Tipp:</b> Fahre mit der Maus über Links, prüfe die Zieladresse in der Statusleiste und achte auf verdächtige Domains!
+    </div>
+  </div>
+  <p style="text-align:center; margin-top:30px;">
+    <a href="index.html">← Zurück zur Startseite</a>
+  </p>
+  <script>
+    const feedback = document.getElementById('feedback');
+    // Sicherer Link
+    document.getElementById('realLink').onclick = function(e) {
+      feedback.textContent = 'Du hast einen echten, sicheren Link geöffnet.';
+    };
+    // Fake-Link (sieht echt aus)
+    document.getElementById('fakeLink').onclick = function(e) {
+      e.preventDefault();
+      feedback.innerHTML = '<span class="danger">Achtung!</span> Das war ein Fake-Link. Häufig werden solche Links für Betrug oder Phishing genutzt.';
+    };
+    // Popup-Link (sieht wie ein normaler Link aus)
+    document.getElementById('popupLink').onclick = function(e) {
+      e.preventDefault();
+      window.open('https://www.example.com', '_blank', 'width=400,height=300');
+      feedback.textContent = 'Du hast ein Popup geöffnet. Popups können Werbung oder Schadsoftware enthalten!';
+    };
+    // JS-Alert (sieht wie ein normaler Link aus)
+    document.getElementById('jsLink').onclick = function(e) {
+      e.preventDefault();
+      alert('Das ist ein JavaScript-Alert!');
+      feedback.textContent = 'Du hast einen Link geklickt, der ein JavaScript-Alert auslöst.';
+    };
+    // Download-Link (sieht wie PDF-Link aus)
+    document.getElementById('downloadLink').onclick = function(e) {
+      e.preventDefault();
+      feedback.innerHTML = '<span class="danger">Vorsicht!</span> Nicht jeder Download ist sicher. Prüfe immer die Quelle!';
+      // Simuliere Download
+      const a = document.createElement('a');
+      a.href = 'data:application/pdf,Fake%20Malware%20Download';
+      a.download = 'Rechnung_2024.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+    // Hover-Link (zeigt Ziel erst beim Hovern)
+    document.getElementById('hoverLink').onmouseover = function() {
+      feedback.textContent = 'Jetzt siehst du das Ziel: https://clickbait.example.com – immer auf die Statusleiste achten!';
+      this.title = 'https://clickbait.example.com';
+    };
+    document.getElementById('hoverLink').onmouseout = function() {
+      feedback.textContent = 'Klicke auf die verschiedenen Elemente und achte auf die Hinweise!';
+      this.title = '';
+    };
+    document.getElementById('hoverLink').onclick = function(e) {
+      e.preventDefault();
+      feedback.innerHTML = '<span class="danger">Achtung!</span> Der Link führt zu einer unseriösen Seite!';
+    };
+    // Hidden-Link (versteckt echtes Ziel)
+    document.getElementById('hiddenLink').onclick = function(e) {
+      e.preventDefault();
+      feedback.innerHTML = '<span class="danger">Versteckte Links!</span> Manche Links sind getarnt und führen zu unerwarteten Seiten.';
+    };
+    // IDN-Link (Homograph-Angriff)
+    document.getElementById('idnLink').onclick = function(e) {
+      e.preventDefault();
+      feedback.innerHTML = '<span class="danger">Homograph-Angriff!</span> Die Adresse sieht aus wie wikipedia.de, ist aber manipuliert.';
+    };
+    // Fake-Mail-Link (gefälschte Adresse)
+    document.getElementById('mailLink').onclick = function(e) {
+      e.preventDefault();
+      feedback.innerHTML = '<span class="danger">Gefälschte Support-Adresse!</span> Achte auf kleine Schreibfehler in E-Mail-Adressen.';
+    };
+    // Fake-Formular
+    document.getElementById('fakeForm').onsubmit = function(e) {
+      e.preventDefault();
+      feedback.innerHTML = '<span class="danger">Formular-Falle!</span> Gib niemals sensible Daten in unbekannte Formulare ein.';
+    };
+  </script>
+</body>
+</html>

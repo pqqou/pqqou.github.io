@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Fake-Shop Bewertungen</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f9fb; color: #222; padding: 40px; }
+    .container { max-width: 600px; margin: 60px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 32px; text-align: center; }
+    .fake-bewertungen { font-size: 1.1em; color: #c0392b; margin: 40px 0; border: 2px dashed #e67e22; border-radius: 8px; padding: 32px 0; cursor: pointer; }
+    .fake-bewertungen.found { background: #f6ddcc; color: #c0392b; border-color: #c0392b; }
+    .btn { margin-top: 30px; padding: 12px 28px; background: #2980b9; color: #fff; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; text-decoration: none; }
+    .btn:hover { background: #1a5276; }
+    .bewertung-list { text-align: left; margin: 0 auto 24px auto; max-width: 480px; }
+    .bewertung-item { background: #fffbe6; border-left: 4px solid #e67e22; margin: 18px 0; padding: 16px 18px; border-radius: 8px; font-size: 1.08em; }
+    .bewertung-name { font-weight: bold; color: #2980b9; }
+    .bewertung-stars { color: #f1c40f; font-size: 1.1em; margin-right: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Bewertungen</h2>
+    <div class="bewertung-list">
+      <div class="bewertung-item">
+        <span class="bewertung-stars">★★★★★</span>
+        <span class="bewertung-name">Lisa:</span>
+        <span>Das iPhone kam nach 2 Stunden an! Bester Shop der Welt, würde 100 Sterne geben, wenn ich könnte!!!</span>
+      </div>
+      <div class="bewertung-item">
+        <span class="bewertung-stars">★★★★★</span>
+        <span class="bewertung-name">Kevin:</span>
+        <span>Ich habe 10 MacBooks bestellt und alle waren noch besser als NEU! Gratis Urlaub dazu bekommen!</span>
+      </div>
+      <div class="bewertung-item">
+        <span class="bewertung-stars">★★★★★</span>
+        <span class="bewertung-name">Chantal:</span>
+        <span>Die AirPods sind so gut, dass ich jetzt sogar Gedanken hören kann. Unglaublich!!!</span>
+      </div>
+      <div class="bewertung-item">
+        <span class="bewertung-stars">★★★★★</span>
+        <span class="bewertung-name">Dieter:</span>
+        <span>Ich habe bezahlt und sofort war das Paket schon da. Schneller als Amazon Prime!</span>
+      </div>
+      <div class="bewertung-item">
+        <span class="bewertung-stars">★★★★★</span>
+        <span class="bewertung-name">Susi:</span>
+        <span>Der Support hat mir sogar beim Umzug geholfen. Einfach der beste Shop!</span>
+      </div>
+    </div>
+    <div class="fake-bewertungen" id="bewertungenError">Diese Bewertungen sind offensichtlich völlig übertrieben!</div>
+    <a href="fakeshop-spiel.html#found-navBewertungen" class="btn">Zurück zum Shop</a>
+  </div>
+  <script>
+    function markBewertungenFound() {
+      let found = {};
+      try { found = JSON.parse(localStorage.getItem('fakeshop_found')) || {}; } catch {}
+      found['navBewertungen'] = true;
+      localStorage.setItem('fakeshop_found', JSON.stringify(found));
+    }
+    document.getElementById('bewertungenError').onclick = function() {
+      this.classList.add('found');
+      markBewertungenFound();
+      alert("Achtung: Diese Bewertungen sind offensichtlich völlig übertrieben!");
+    };
+    (function() {
+      let found = {};
+      try { found = JSON.parse(localStorage.getItem('fakeshop_found')) || {}; } catch {}
+      if (found['navBewertungen']) document.getElementById('bewertungenError').classList.add('found');
+    })();
+  </script>
+</body>
+</html>

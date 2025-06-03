@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Fake-Shop Kontakt</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f9fb; color: #222; padding: 40px; }
+    .container { max-width: 500px; margin: 60px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 32px; text-align: center; }
+    .fake-kontakt { font-size: 1.1em; color: #c0392b; margin: 40px 0; border: 2px dashed #e67e22; border-radius: 8px; padding: 32px 0; cursor: pointer; }
+    .fake-kontakt.found { background: #f6ddcc; color: #c0392b; border-color: #c0392b; }
+    .btn { margin-top: 30px; padding: 12px 28px; background: #2980b9; color: #fff; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; text-decoration: none; }
+    .btn:hover { background: #1a5276; }
+    .kontakt-title { font-size: 1.3em; font-weight: bold; margin-bottom: 18px; }
+    .kontakt-content { color: #444; margin-bottom: 18px; }
+    .kontakt-form { margin: 0 auto; max-width: 340px; }
+    .kontakt-form input, .kontakt-form textarea { width: 100%; margin: 8px 0; padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 1em; }
+    .kontakt-form button { margin-top: 10px; padding: 10px 22px; background: #e67e22; color: #fff; border: none; border-radius: 6px; font-size: 1em; cursor: pointer; }
+    .kontakt-form button:hover { background: #c0392b; }
+    .fake-hint { color: #e67e22; font-size: 0.98em; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="kontakt-title">Kontakt</div>
+    <div class="kontakt-content">
+      Sie haben Fragen? Schreiben Sie uns einfach!
+      <form class="kontakt-form" id="fakeKontaktForm" autocomplete="off" onsubmit="return false;">
+        <input type="text" placeholder="Ihr Name" required>
+        <input type="email" placeholder="Ihre E-Mail" required>
+        <textarea rows="3" placeholder="Ihre Nachricht"></textarea>
+        <button type="submit">Absenden</button>
+      </form>
+      <div class="fake-hint">(Hinweis: Das Kontaktformular funktioniert nicht!)</div>
+    </div>
+    <div class="fake-kontakt" id="kontaktError">Das Kontaktformular wird wohl nicht funktionieren</div>
+    <a href="fakeshop-spiel.html#found-navKontakt" class="btn">Zurück zum Shop</a>
+  </div>
+  <script>
+    function markKontaktFound() {
+      let found = {};
+      try { found = JSON.parse(localStorage.getItem('fakeshop_found')) || {}; } catch {}
+      found['navKontakt'] = true;
+      localStorage.setItem('fakeshop_found', JSON.stringify(found));
+    }
+    document.getElementById('kontaktError').onclick = function() {
+      this.classList.add('found');
+      markKontaktFound();
+      alert("Achtung: Das Kontaktformular ist nur Schein und funktioniert nicht!");
+    };
+    // Fake-Absenden
+    document.getElementById('fakeKontaktForm').onsubmit = function() {
+      alert("Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.");
+      return false;
+    };
+    (function() {
+      let found = {};
+      try { found = JSON.parse(localStorage.getItem('fakeshop_found')) || {}; } catch {}
+      if (found['navKontakt']) document.getElementById('kontaktError').classList.add('found');
+    })();
+  </script>
+</body>
+</html>
