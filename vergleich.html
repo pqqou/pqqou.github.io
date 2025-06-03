@@ -52,6 +52,9 @@
     .profile-stats div {
       text-align: center;
     }
+    .profile-overlay-area {
+      position: relative;
+    }
     .private-overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -64,6 +67,7 @@
       font-size: 1.1em;
       color: #2c3e50;
       z-index: 2;
+      pointer-events: none;
     }
     .privacy-options {
       display: flex;
@@ -121,27 +125,29 @@
     <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profilbild" class="profile-pic">
     <div class="profile-name" id="profileName">Max Mustermann</div>
     <div class="profile-username" id="profileUsername">@maxmuster</div>
-    <div class="profile-bio" id="profileBio">
-      Willkommen auf meinem Profil! Ich liebe Webentwicklung, Reisen und guten Kaffee.
-    </div>
-    <div class="profile-stats" id="profileStats">
-      <div id="followersDiv">
-        <div id="followersCount" style="font-weight:bold;">1.234</div>
-        <div>Follower</div>
+    <div class="profile-overlay-area">
+      <div class="profile-bio" id="profileBio">
+        Willkommen auf meinem Profil! Ich liebe Webentwicklung, Reisen und guten Kaffee.
       </div>
-      <div id="followingDiv">
-        <div id="followingCount" style="font-weight:bold;">567</div>
-        <div>Abonniert</div>
+      <div class="profile-stats" id="profileStats">
+        <div id="followersDiv">
+          <div id="followersCount" style="font-weight:bold;">1.234</div>
+          <div>Follower</div>
+        </div>
+        <div id="followingDiv">
+          <div id="followingCount" style="font-weight:bold;">567</div>
+          <div>Abonniert</div>
+        </div>
+        <div id="postsDiv">
+          <div id="postsCount" style="font-weight:bold;">42</div>
+          <div>Posts</div>
+        </div>
       </div>
-      <div id="postsDiv">
-        <div id="postsCount" style="font-weight:bold;">42</div>
-        <div>Posts</div>
+      <div id="privateOverlay" class="private-overlay" style="display:none;">
+        <div style="font-size:2em; margin-bottom:10px;">🔒</div>
+        Dieses Profil ist privat.<br>
+        Folge, um die Inhalte zu sehen.
       </div>
-    </div>
-    <div id="privateOverlay" class="private-overlay" style="display:none;">
-      <div style="font-size:2em; margin-bottom:10px;">🔒</div>
-      Dieses Profil ist privat.<br>
-      Folge, um die Inhalte zu sehen.
     </div>
   </div>
 
@@ -218,12 +224,12 @@
       // Beschreibung
       if (bioPrivate.checked) {
         profileBio.classList.add('private-info');
-        profileBio.classList.add('bio-strike'); // NEU: Durchstreichen
+        profileBio.classList.add('bio-strike');
         bioOeffentlich.classList.add('private-info');
         bioPrivat.classList.remove('private-info');
       } else {
         profileBio.classList.remove('private-info');
-        profileBio.classList.remove('bio-strike'); // NEU: Durchstreichen entfernen
+        profileBio.classList.remove('bio-strike');
         bioOeffentlich.classList.remove('private-info');
         bioPrivat.classList.add('private-info');
       }
