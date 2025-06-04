@@ -66,14 +66,15 @@
 
     <input type="text" id="passwordInput" placeholder="Passwort eingeben..." oninput="checkPassword()">
     <div id="feedback"></div>
-    
-    <div style="margin-top: 40px;">
-      <a href="wiki.html#passwoerter-artikel" class="btn" style="margin-left:10px;">
-        <button style="padding: 12px 28px; font-size: 17px; background: #2c3e50; color: #fff; border: none; border-radius: 6px; cursor: pointer;">
-          Mehr Informationen
-        </button>
-      </a>
-    </div>
+  </div>
+  <div style="margin-top: 40px; text-align: center;">
+    <a href="wiki.html#passwoerter-artikel" class="btn" style="margin-left:10px;">
+      <button style="padding: 12px 28px; font-size: 17px; background: #2c3e50; color: #fff; border: none; border-radius: 6px; cursor: pointer;">
+        Mehr Informationen
+      </button>
+    </a>
+  </div>
+  <div style="margin-top: 30px; text-align: center;">
     <a href="index.html">← Zurück zur Startseite</a>
   </div>
   <script>
@@ -93,22 +94,47 @@
         return;
       }
 
-      // Neue Logik: Länge entscheidet zuerst, dann Vielfalt
+      // Brute-Force-Schätzung
+      function estimateBruteForceTime(len, variety) {
+        // Annahme: 10 Milliarden Versuche/Sekunde (moderne Grafikkarten)
+        const attemptsPerSecond = 1e10;
+        let charset = 0;
+        if (variety.upper) charset += 26;
+        if (variety.lower) charset += 26;
+        if (variety.number) charset += 10;
+        if (variety.special) charset += 32; // grobe Annahme
+        if (charset === 0) charset = 26; // nur Buchstaben
+        const totalComb = BigInt(Math.pow(charset, len));
+        const seconds = totalComb / BigInt(attemptsPerSecond);
+        if (seconds < 60n) return "< 1 Minute";
+        if (seconds < 3600n) return `${Number(seconds/60n).toFixed(0)} Minuten`;
+        if (seconds < 86400n) return `${Number(seconds/3600n).toFixed(0)} Stunden`;
+        if (seconds < 31536000n) return `${Number(seconds/86400n).toFixed(0)} Tage`;
+        if (seconds < 3153600000n) return `${Number(seconds/31536000n).toFixed(0)} Jahre`;
+        return "> 100 Jahre";
+      }
+
+      const bruteTime = estimateBruteForceTime(length, {
+        upper: hasUpper,
+        lower: hasLower,
+        number: hasNumber,
+        special: hasSpecial
+      });
+
       let explanation = "";
       if (length < 8) {
         feedback.className = "weak";
-        explanation = "🔴 Schwaches Passwort.<br>Ein sicheres Passwort sollte mindestens 12 Zeichen lang sein. Kurze Passwörter sind sehr leicht zu knacken.";
+        explanation = `🔴 Schwach: Zu kurz.<br><b>Brute-Force:</b> ${bruteTime}`;
       } else if (length < 12) {
         feedback.className = "medium";
-        explanation = "🟡 Mittelstarkes Passwort.<br>Dein Passwort ist schon etwas länger, aber noch nicht optimal. Empfohlen werden mindestens 12 Zeichen und eine Mischung aus Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen.";
+        explanation = `🟡 Mittel: Besser, aber noch zu kurz.<br><b>Brute-Force:</b> ${bruteTime}`;
       } else {
-        // Ab 12 Zeichen: Prüfe Vielfalt
         if (hasUpper && hasLower && hasNumber && hasSpecial) {
           feedback.className = "strong";
-          explanation = "🟢 Starkes Passwort!<br>Dein Passwort ist lang genug und enthält Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen. Solche Passwörter sind sehr schwer zu erraten oder zu knacken. Noch besser ist es, wenn du ein Passwort verwendest, das keinen Bezug zu persönlichen Daten hat und einzigartig für jeden Dienst ist.";
+          explanation = `🟢 Stark: Sehr sicher.<br><b>Brute-Force:</b> ${bruteTime}`;
         } else {
           feedback.className = "medium";
-          explanation = "🟡 Mittelstarkes Passwort.<br>Die Länge ist sehr gut! Noch sicherer wird es, wenn du zusätzlich Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen kombinierst.";
+          explanation = `🟡 Mittel: Länge gut, aber mehr Zeichenarten nutzen.<br><b>Brute-Force:</b> ${bruteTime}`;
         }
       }
 

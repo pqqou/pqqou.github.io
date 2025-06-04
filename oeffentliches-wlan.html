@@ -85,24 +85,51 @@
       font-size: 2em;
       margin: 18px 0;
     }
+    .btn {
+      display: inline-block;
+      font-size: 1.2em;
+      padding: 16px 32px;
+      background: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 20px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #2980b9;
+    }
+    .spiel-container {
+      max-width: 600px;
+      margin: 0 auto 40px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px #0001;
+      padding: 36px 28px 32px 28px;
+    }
   </style>
 </head>
 <body>
-  <h1>Öffentliches WLAN – Vorsicht Falle!</h1>
-  <button class="big-btn" id="trapBtn">Kostenloses WLAN nutzen</button>
-  <div class="hint">(Achtung: Nicht jeder Klick ist harmlos!)</div>
-  <div id="popupOverlay" class="popup-overlay" style="display:none;">
-    <div class="fake-popup" id="popupContent">
-      <button class="popup-close" id="popupCloseBtn" title="Schließen">&times;</button>
-      <div class="popup-title">Du bist im öffentlichen WLAN gefangen!</div>
-      <div class="popup-locked">🔒</div>
-      <div id="closeCounter" style="margin: 12px 0 8px 0; font-size:1.1em; color:#e67e22;">
-        Fenster geschlossen: <span id="closeCountDisplay">0</span> / 20
+  <div class="spiel-container">
+    <h1>Öffentliches WLAN – Vorsicht Falle!</h1>
+    <button class="big-btn" id="trapBtn">Kostenloses WLAN nutzen</button>
+    <div class="hint">(Achtung: Nicht jeder Klick ist harmlos!)</div>
+    <div id="popupOverlay" class="popup-overlay" style="display:none;">
+      <div class="fake-popup" id="popupContent">
+        <button class="popup-close" id="popupCloseBtn" title="Schließen">&times;</button>
+        <div class="popup-title">Du bist im öffentlichen WLAN gefangen!</div>
+        <div class="popup-locked">🔒</div>
+        <div id="closeCounter" style="margin: 12px 0 8px 0; font-size:1.1em; color:#e67e22;">
+          Fenster geschlossen: <span id="closeCountDisplay">0</span> / 20
+        </div>
+        <p>Dieses Fenster lässt sich nicht dauerhaft schließen.<br>Nur ein Neuladen der Seite hilft weiter.</p>
       </div>
-      <p>Dieses Fenster lässt sich nicht dauerhaft schließen.<br>Nur ein Neuladen der Seite hilft weiter.</p>
     </div>
   </div>
-  <p style="margin-top: 60px;">
+  <a href="oeffentliches-wlan-artikel.html" class="btn" style="background:#2c3e50; margin-left:10px;">Mehr Informationen</a>
+  <p style="margin-top: 24px;">
     <a href="index.html">← Zurück zur Startseite</a>
   </p>
   <script>
