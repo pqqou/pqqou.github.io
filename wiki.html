@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Wiki – Alle Artikel</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    body { display: flex; min-height: 100vh; margin: 0; }
+    .sidebar {
+      width: 240px;
+      background: #2c3e50;
+      color: #fff;
+      padding: 0;
+      box-shadow: 2px 0 8px #0002;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar h2 {
+      margin: 0; padding: 28px 0 18px 0; text-align: center; font-size: 1.3em; background: #22313a; letter-spacing: 1px;
+    }
+    .sidebar ul {
+      list-style: none; padding: 0 0 20px 0; margin: 0; flex: 1;
+    }
+    .sidebar li {
+      border-bottom: 1px solid #22313a;
+    }
+    .sidebar a {
+      display: block; color: #fff; text-decoration: none; padding: 16px 28px; transition: background 0.15s; font-size: 1.08em;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background: #2980b9; color: #fff;
+    }
+    .main-content {
+      flex: 1; background: #f7f9fb; display: flex; flex-direction: column;
+    }
+    .iframe-container {
+      flex: 1; margin: 32px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #0001; overflow: hidden;
+    }
+    iframe {
+      width: 100%; height: 100%; border: none; min-height: 600px;
+    }
+    @media (max-width: 800px) {
+      .sidebar { width: 100px; }
+      .sidebar a { padding: 12px 8px; font-size: 0.95em; }
+      .iframe-container { margin: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <h2>Wiki</h2>
+    <ul>
+      <li><a href="phishing-artikel.html" target="article-frame">Phishing Artikel</a></li>
+      <li><a href="passwoerter-artikel.html" target="article-frame">Passwörter</a></li>
+      <li><a href="datenschutz-artikel.html" target="article-frame">Datenschutz in Sozialen Medien</a></li>
+    </ul>
+    <a href="index.html" style="color:#fff; text-align:center; margin-bottom:18px;">← Zurück zur Startseite</a>
+  </nav>
+  <main class="main-content">
+    <div class="iframe-container">
+      <iframe name="article-frame" src="datenschutz-artikel.html"></iframe>
+    </div>
+  </main>
+  <script>
+    // Mark active link
+    const links = document.querySelectorAll('.sidebar a[href$=".html"]');
+    const iframe = document.querySelector('iframe[name="article-frame"]');
+    // Scroll to anchor if present in URL
+    function selectArticleFromHash() {
+      const hash = window.location.hash.replace('#', '');
+      if (hash) {
+        const link = Array.from(links).find(l => l.getAttribute('href').replace('.html','-artikel') === hash || l.getAttribute('href') === hash + '.html');
+        if (link) {
+          link.click();
+        }
+      }
+    }
+    links.forEach(link => {
+      link.addEventListener('click', function() {
+        links.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        // Update hash
+        window.location.hash = this.getAttribute('href').replace('.html','-artikel');
+      });
+    });
+    // Set first link active on load
+    links[0].classList.add('active');
+    // On load, select article from hash if present
+    selectArticleFromHash();
+    window.addEventListener('hashchange', selectArticleFromHash);
+  </script>
+</body>
+</html>

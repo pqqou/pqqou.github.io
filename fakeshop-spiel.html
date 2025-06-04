@@ -132,8 +132,8 @@
       left: 50%;
       bottom: 32px;
       transform: translateX(-50%);
-      background: #fffbe6;
-      color: #c0392b;
+      background: #2980b9;
+      color: #fff;
       border: 2px solid #e67e22;
       border-radius: 8px;
       padding: 16px 32px;
@@ -228,7 +228,16 @@
   </style>
 </head>
 <body>
-  <div class="shop-header-bar">
+  <div class="shop-header-bar" style="position:relative;">
+    <button id="backBtn" style="position:absolute; left:18px; top:33px; background:#2980b9; color:#fff; border:none; border-radius:8px; padding:0 5px; font-size:0.9em; cursor:pointer; font-weight:normal; height:18px; display:inline-flex; align-items:center;">
+      &#8592; Zurück
+    </button>
+    <span id="counterBox" style="position:absolute; top:26px; right:22px; font-size:0.95em; background:#2980b9; color:#fff; padding:3px 10px; border-radius:14px; font-weight:normal; height:26px; display:inline-flex; align-items:center;">
+      0 / 0
+    </span>
+    <button id="refreshBtn" style="position:absolute; right:135px; top:28px; background:#2980b9; color:#fff; border:none; border-radius:16px; padding:0 14px; font-size:1.25em; cursor:pointer; font-weight:normal; height:32px; display:inline-flex; align-items:center;">
+      &#x21bb;
+    </button>
     SuperDealz24 <span class="fake-badge" id="badgeFake">Trusted Shop</span>
     <span class="fake-seal" id="sealFake">✓</span>
   </div>
@@ -379,6 +388,24 @@
       }
     }
 
+    function updateCounter() {
+      // Zähle nur die "any"-Fehler jeweils als einen Punkt
+      let total = errors.length;
+      let foundCount = 0;
+      errors.forEach(err => {
+        if (err.id === "anyImg") {
+          if (found["anyImg"]) foundCount++;
+        } else if (err.id === "anyPrice") {
+          if (found["anyPrice"]) foundCount++;
+        } else if (err.id === "anyBewertung") {
+          if (found["anyBewertung"]) foundCount++;
+        } else {
+          if (found[err.id]) foundCount++;
+        }
+      });
+      document.getElementById('counterBox').textContent = foundCount + " / " + total;
+    }
+
     // Beim Laden: bereits gefundene Fehler markieren
     loadFound();
     errors.forEach(err => {
@@ -394,6 +421,7 @@
     bindAnyImg();
     bindAnyPrice();
     bindAnyBewertung();
+    updateCounter();
 
     function showFeedback(msg) {
       feedbackBar.textContent = msg;
@@ -405,6 +433,7 @@
       found[id] = true;
       const el = document.getElementById(id);
       if (el) el.classList.add('found');
+      updateCounter();
     }
 
     function handleErrorClick(err) {
@@ -426,6 +455,7 @@
         document.getElementById('winOverlay').style.display = 'flex';
         localStorage.removeItem('fakeshop_found');
       }
+      updateCounter();
     }
 
     // Fehler-Elemente binden
@@ -473,6 +503,7 @@
                 if (el) el.classList.add('found');
               }
               showFeedback(errors.find(e => e.id === "anyImg").msg);
+              updateCounter();
               checkWin();
             }
           });
@@ -501,6 +532,7 @@
                 if (el) el.classList.add('found');
               }
               showFeedback(errors.find(e => e.id === "anyPrice").msg);
+              updateCounter();
               checkWin();
             }
           });
@@ -529,6 +561,7 @@
                 if (el) el.classList.add('found');
               }
               showFeedback(errors.find(e => e.id === "anyBewertung").msg);
+              updateCounter();
               checkWin();
             }
           });
@@ -540,6 +573,17 @@
     if (!window.location.hash) {
       localStorage.removeItem('fakeshop_found');
     }
+
+    document.getElementById('refreshBtn').onclick = function() {
+      localStorage.removeItem('fakeshop_found');
+      location.reload();
+    };
+
+    document.getElementById('backBtn').onclick = function() {
+      window.history.back();
+    };
+
+    // ...existing code...
   </script>
 </body>
 </html>
